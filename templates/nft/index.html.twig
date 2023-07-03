@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello NftController!{% endblock %}
+
+{% block body %}
+<div class="container w-75">
+<h2>Nfts List</h2>
+    <table class="table">
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Title</th>
+            <th scope="col">Token</th>
+            <th scope="col">Representation</th>
+            <th scope="col">Quantity</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for nft in nfts %}
+          <tr>
+            <th scope="row">{{ nft.id }}</th>
+            <td>{{ nft.title }}</td>
+            <td>{{ nft.token }}</td>
+            <td class="text-center"><img src="/{{ nft.representation }}" alt="" width="32px"></td>
+            <td class="text-center">{{ nft.quantity }}</td>
+            <td>
+                <a href="{{ path('app_nft_remove', { 'id':nft.id }) }}"><i class="bi bi-trash"></i></a>
+                <a href="{{ path('app_nft_update', { 'id':nft.id }) }}"><i class="bi bi-pencil"></i></a>
+                <a href="{{ path('app_nft_show', { 'id':nft.id }) }}"><i class="bi bi-eye"></i></a>
+            </td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+          {# display navigation #}
+        <div class="navigation">
+            {{ knp_pagination_render(nfts, '@KnpPaginator/Pagination/bootstrap_v5_pagination.html.twig') }}
+        </div>
+</div>
+{% endblock %}

@@ -1,0 +1,7 @@
+App\Entity\TypeNft:
+  type1:
+    designation: 'png'
+  type2:
+    designation: 'mp3'
+  type3:
+    designation: 'mpeg'

@@ -4,16 +4,60 @@
         <meta charset="UTF-8">
         <title>{% block title %}Welcome!{% endblock %}</title>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚫️</text></svg>">
-        {# Run `composer require symfony/webpack-encore-bundle` to start using Symfony UX #}
         {% block stylesheets %}
-            {{ encore_entry_link_tags('app') }}
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.3.0/font/bootstrap-icons.css">
+            {{ encore_entry_link_tags('main_style') }}
+        
+        <!-- Option 1: Include in HTML -->
+        
         {% endblock %}
 
         {% block javascripts %}
-            {{ encore_entry_script_tags('app') }}
+            {{ encore_entry_script_tags('main_script') }}
+        
         {% endblock %}
     </head>
-    <body>
-        {% block body %}{% endblock %}
+
+    <body class="bg-secondary">
+        {% if app.user %}
+        {% set nbCol = 10 %}
+        <div class="row">
+            <aside class="col-md-2 bg-success-subtle p-0">
+                <div class="list-group w-100 mx-auto sticky-lg-top">
+                    <a href="{{ path('app_logout') }}" class="list-group-item list-group-item-action list-group-item-dark text-danger mb-3">Logout</a>
+                    {% if app.request.requestUri == '/admin/users_show' %}
+                        <a href="{{ path('app_users_show') }}" class="list-group-item list-group-item-action list-group-item-dark active">Users</a>
+                    {% else %}
+                        <a href="{{ path('app_users_show') }}" class="list-group-item list-group-item-action list-group-item-dark">Users</a>
+                    {% endif %}
+
+                    {% if app.request.requestUri == '/admin/nfts_show' %}
+                        <a href="{{ path('app_nfts_show') }}" class="list-group-item list-group-item-action list-group-item-dark active">Nfts</a>
+                    {% else %}
+                        <a href="{{ path('app_nfts_show') }}" class="list-group-item list-group-item-action list-group-item-dark">Nfts</a>
+                    {% endif %}
+
+                    {% if app.request.requestUri == '/admin/categories_show' %}
+                        <a href="{{ path('app_categories_show') }}" class="list-group-item list-group-item-action list-group-item-dark active">Categories</a>
+                    {% else %}
+                        <a href="{{ path('app_categories_show') }}" class="list-group-item list-group-item-action list-group-item-dark">Categories</a>
+                    {% endif %}
+
+                    {% if app.request.requestUri == '/admin/nft_type' %}
+                        <a href="{{ path('app_nft_type_show') }}" class="list-group-item list-group-item-action list-group-item-dark active">Type NFT</a>
+                    {% else %}
+                        <a href="{{ path('app_nft_type_show') }}" class="list-group-item list-group-item-action list-group-item-dark">Type NFT</a>
+                    {% endif %}
+                </div>
+            </aside>
+            
+        {% else %}
+            {% set nbCol = 12 %}
+        {% endif %}
+            <div class="col-md-{{ nbCol }}">
+                <h1 class="text-center">Administration</h1>
+                {% block body %}{% endblock %}
+            </div>
+        </div>
     </body>
 </html>

@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello UserController!{% endblock %}
+
+{% block body %}
+{% dump(form.avatarPath) %}
+    <div class="container w-75">
+        {{ form_start(form) }}
+        <img src="/{{ form.avatarPath.vars.data.pathname }}" width="32px">
+            <div class="row row-cols-3">
+                <div class="col">{{ form_row(form.email) }}</div>
+                <div class="col">{{ form_row(form.firstName) }}</div>
+                <div class="col">{{ form_row(form.lastName) }}</div>
+                <div class="col">{{ form_row(form.roles) }}</div>
+                <div class="col">{{ form_row(form.birthDate) }}</div>
+                <div class="col">{{ form_row(form.avatarPath) }}
+                </div>
+                <div class="col">{{ form_row(form.inscriptionDate) }}</div>
+                <div class="col">{{ form_row(form.pseudo) }}</div>
+                <div class="col">
+                    <label for="user_update_estHomme" class="form-label required">Genre</label>
+                    <div>{{ form_widget(form.isMale) }}</div>
+                </div>
+            </div>
+        {{ form_end(form) }}
+    </div>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Hello UserController!{% endblock %}
+
+{% block body %}
+<div class="container w-75">
+    <table class="table">
+    <h2>Users list</h2>
+        <thead>
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Firstname</th>
+            <th scope="col">Lastname</th>
+            <th scope="col">email</th>
+            <th scope="col">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+        {% for user in users %}
+          <tr>
+            <th scope="row">{{ user.id }}</th>
+            <td>{{ user.firstName }}</td>
+            <td>{{ user.lastName }}</td>
+            <td>{{ user.email }}</td>
+            <td>
+                <span  class="click" data-bs-toggle="modal" data-bs-target="#deleteConfirm-{{ user.id }}"><i class="bi bi-trash text-primary"></i></span>
+                <a href="{{ path('app_user_update', { 'id':user.id }) }}"><i class="bi bi-pencil"></i></a>
+                <a href="{{ path('app_user_show', { 'id':user.id }) }}"><i class="bi bi-eye"></i></a>
+            </td>
+          </tr>
+          <!-- Modal -->
+                <div class="modal fade" id="deleteConfirm-{{ user.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">Supprimer</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                User: {{ user.email }}
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <a href="{{ path('app_user_remove', { 'id':user.id }) }}" class="btn btn-primary">Confirmer</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+        {% endfor %}
+        </tbody>
+      </table>
+          {# display navigation #}
+        <div class="navigation w-50 mx-auto">
+            {{ knp_pagination_render(users, '@KnpPaginator/Pagination/bootstrap_v5_pagination.html.twig') }}
+        </div>
+</div>
+{% endblock %}

@@ -1,0 +1,14 @@
+App\Entity\User:
+  user{1..200}:
+    email (unique): '<email()>'
+    roles: '[]'
+    password: '<password()>'
+    isMale: '<numberBetween(0, 1)>'
+    firstName: '<firstname()>'
+    lastName: '<lastName()>'
+    birthDate: '<dateTimeBetween()>'
+    avatar: 'upload/tux.svg'
+    inscriptionDate: '<dateTimeBetween()>'
+    pseudo: '<word()>'
+    nfts: '<numberBetween(1, 50)>x @nft*'
+    address: '@address*'

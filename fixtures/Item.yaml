@@ -1,0 +1,4 @@
+App\Entity\Item:
+  item{1..50}:
+    designation: '<sentence(30)>'
+    nft: "@nft*"
