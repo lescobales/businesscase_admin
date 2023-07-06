@@ -1,0 +1,5 @@
+App\Entity\Visit:
+  visit{0..2000}:
+    dateVisit: '<dateTimeBetween()>'
+    nft: '@nft*'
+    user: '@user*'

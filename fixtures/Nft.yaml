@@ -2,6 +2,7 @@ App\Entity\Nft:
     nft{0..1000}:
         token (unique): '<password()>'
         title: '<sentence(3)>'
-        representation: '/upload/tux.png'
+        representation: 'upload/tux.png'
         initialPrice: '<numberBetween(1, 100)>'
         quantity: '1'
+        typeNft: '@type*'

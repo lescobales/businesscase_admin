@@ -1,0 +1,22 @@
+App\Entity\CourseEth:
+  course1:
+    courseEur: '<numberBetween(1000, 2000)>'
+    dateCourse: '<dateTimeBetween()>'
+  course2:
+    courseEur: '<numberBetween(1000, 2000)>'
+    dateCourse: '<dateTimeBetween()>'
+  course3:
+    courseEur: '<numberBetween(1000, 2000)>'
+    dateCourse: '<dateTimeBetween()>'
+  course4:
+    courseEur: '<numberBetween(1000, 2000)>'
+    dateCourse: '<dateTimeBetween()>'
+  course5:
+    courseEur: '<numberBetween(1000, 2000)>'
+    dateCourse: '<dateTimeBetween()>'
+  course6:
+    courseEur: '<numberBetween(1000, 2000)>'
+    dateCourse: '<dateTimeBetween()>'
+  course7:
+    courseEur: '<numberBetween(1000, 2000)>'
+    dateCourse: '<dateTimeBetween()>'

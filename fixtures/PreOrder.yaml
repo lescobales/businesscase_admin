@@ -1,0 +1,8 @@
+App\Entity\PreOrder:
+  preorder{1..100}:
+    isPurchase: '<numberBetween(0,1)>'
+    amount: '<numberBetween(1, 100)>'
+    datePreOrder: '<dateTimeBetween()>'
+    datePurchase: '<dateTimeBetween()>'
+    user: '@user*'
+    items: '<numberBetween(1, 5)>x @item*'

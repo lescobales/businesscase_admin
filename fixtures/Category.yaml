@@ -1,0 +1,6 @@
+App\Entity\Category:
+  category{1..5}:
+    designation: '<sentence(3)>'
+    representation: 'upload/tux.svg'
+    nfts: '<numberBetween(0, 50)>x @nft*'
+    categories: '<numberBetween(0, 50)>x @category*'
