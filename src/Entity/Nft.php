@@ -7,9 +7,29 @@ use App\Repository\NftRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: NftRepository::class)]
-#[ApiResource()]
+#[ApiResource(
+    collectionOperations:[
+        'post' => [
+            'denormalization_context' => [
+                'groups' => 'nfts:post'
+            ]
+            ],
+        'get' => [
+            'normalization_context' => [
+                'groups' => 'ntfs:list'
+            ]
+        ]
+    ],
+    itemOperations:[
+        'get',
+        'put',
+        'delete'
+    ]
+
+)]
 class Nft
 {
     #[ORM\Id]
