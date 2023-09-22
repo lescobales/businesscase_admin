@@ -2,26 +2,26 @@
 
 namespace App\Repository;
 
-use App\Entity\TypeNft;
+use App\Entity\NftType;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @extends ServiceEntityRepository<TypeNft>
+ * @extends ServiceEntityRepository<NftType>
  *
- * @method TypeNft|null find($id, $lockMode = null, $lockVersion = null)
- * @method TypeNft|null findOneBy(array $criteria, array $orderBy = null)
- * @method TypeNft[]    findAll()
- * @method TypeNft[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method NftType|null find($id, $lockMode = null, $lockVersion = null)
+ * @method NftType|null findOneBy(array $criteria, array $orderBy = null)
+ * @method NftType[]    findAll()
+ * @method NftType[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class TypeNftRepository extends ServiceEntityRepository
+class NftTypeRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, TypeNft::class);
+        parent::__construct($registry, NftType::class);
     }
 
-    public function save(TypeNft $entity, bool $flush = false): void
+    public function save(NftType $entity, bool $flush = false): void
     {
         $this->getEntityManager()->persist($entity);
 
@@ -30,7 +30,7 @@ class TypeNftRepository extends ServiceEntityRepository
         }
     }
 
-    public function remove(TypeNft $entity, bool $flush = false): void
+    public function remove(NftType $entity, bool $flush = false): void
     {
         $this->getEntityManager()->remove($entity);
 
@@ -40,7 +40,7 @@ class TypeNftRepository extends ServiceEntityRepository
     }
 
 //    /**
-//     * @return TypeNft[] Returns an array of TypeNft objects
+//     * @return NftType[] Returns an array of NftType objects
 //     */
 //    public function findByExampleField($value): array
 //    {
@@ -54,7 +54,7 @@ class TypeNftRepository extends ServiceEntityRepository
 //        ;
 //    }
 
-//    public function findOneBySomeField($value): ?TypeNft
+//    public function findOneBySomeField($value): ?NftType
 //    {
 //        return $this->createQueryBuilder('t')
 //            ->andWhere('t.exampleField = :val')

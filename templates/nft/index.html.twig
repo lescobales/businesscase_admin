@@ -12,7 +12,6 @@
             <th scope="col">Title</th>
             <th scope="col">Token</th>
             <th scope="col">Representation</th>
-            <th scope="col">Quantity</th>
             <th scope="col">Action</th>
           </tr>
         </thead>
@@ -23,11 +22,8 @@
             <td>{{ nft.title }}</td>
             <td>{{ nft.token }}</td>
             <td class="text-center"><img src="/{{ nft.representation }}" alt="" width="32px"></td>
-            <td class="text-center">{{ nft.quantity }}</td>
             <td>
                 <a href="{{ path('app_nft_remove', { 'id':nft.id }) }}"><i class="bi bi-trash"></i></a>
-                <a href="{{ path('app_nft_update', { 'id':nft.id }) }}"><i class="bi bi-pencil"></i></a>
-                <a href="{{ path('app_nft_show', { 'id':nft.id }) }}"><i class="bi bi-eye"></i></a>
             </td>
           </tr>
         {% endfor %}

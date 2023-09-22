@@ -2,33 +2,54 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\AddressRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
+#[ApiResource(
+    collectionOperations:
+    [
+
+    ],
+    itemOperations:
+    [
+        'get' => [
+            'normalization_context' => [
+                'groups' => 'address:item'
+            ]
+        ]
+    ]
+)]
 #[ORM\Entity(repositoryClass: AddressRepository::class)]
 class Address
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['address:item', 'user:item'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $ligne1 = null;
+    #[Groups(['address:item', 'user:item'])]
+    private ?string $line1 = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $ligne2 = null;
+    #[Groups(['address:item', 'user:item'])]
+    private ?string $line2 = null;
 
     #[ORM\Column(length: 255, nullable: true)]
-    private ?string $ligne3 = null;
+    #[Groups(['address:item', 'user:item'])]
+    private ?string $line3 = null;
 
     #[ORM\Column(length: 10)]
+    #[Groups(['address:item', 'user:item'])]
     private ?string $postCode = null;
 
-    #[ORM\Column(length: 50)]
-    private ?string $town = null;
+    #[ORM\Column(length: 255)]#[Groups(['address:item', 'user:item'])]
+    private ?string $city = null;
 
     #[ORM\OneToMany(mappedBy: 'address', targetEntity: User::class)]
     private Collection $users;
@@ -43,38 +64,38 @@ class Address
         return $this->id;
     }
 
-    public function getLigne1(): ?string
+    public function getLine1(): ?string
     {
-        return $this->ligne1;
+        return $this->line1;
     }
 
-    public function setLigne1(string $ligne1): static
+    public function setLine1(string $line1): static
     {
-        $this->ligne1 = $ligne1;
+        $this->line1 = $line1;
 
         return $this;
     }
 
-    public function getLigne2(): ?string
+    public function getLine2(): ?string
     {
-        return $this->ligne2;
+        return $this->line2;
     }
 
-    public function setLigne2(?string $ligne2): static
+    public function setLine2(?string $line2): static
     {
-        $this->ligne2 = $ligne2;
+        $this->line2 = $line2;
 
         return $this;
     }
 
-    public function getLigne3(): ?string
+    public function getLine3(): ?string
     {
-        return $this->ligne3;
+        return $this->line3;
     }
 
-    public function setLigne3(?string $ligne3): static
+    public function setLine3(?string $line3): static
     {
-        $this->ligne3 = $ligne3;
+        $this->line3 = $line3;
 
         return $this;
     }
@@ -91,14 +112,14 @@ class Address
         return $this;
     }
 
-    public function getTown(): ?string
+    public function getCity(): ?string
     {
-        return $this->town;
+        return $this->city;
     }
 
-    public function setTown(string $town): static
+    public function setCity(string $city): static
     {
-        $this->town = $town;
+        $this->city = $city;
 
         return $this;
     }

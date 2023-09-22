@@ -13,19 +13,19 @@ class AddressType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('ligne1',TextType::class ,[
+            ->add('line1',TextType::class ,[
                 'attr' => ['class' => 'input-group form-control']
             ])
-            ->add('ligne2',TextType::class ,[
+            ->add('line2',TextType::class ,[
                 'attr' => ['class' => 'input-group form-control']
             ])
-            ->add('ligne3',TextType::class ,[
+            ->add('line3',TextType::class ,[
                 'attr' => ['class' => 'input-group form-control']
             ])
             ->add('postCode',TextType::class ,[
                 'attr' => ['class' => 'input-group form-control']
             ])
-            ->add('town',TextType::class ,[
+            ->add('city',TextType::class ,[
                 'attr' => ['class' => 'input-group form-control']
             ])
         ;

@@ -1,0 +1,4 @@
+App\Entity\Course:
+  course{1..7}:
+    eurCourse: '<numberBetween(1000, 2000)>'
+    createdAt: '<dateTimeBetween()>'

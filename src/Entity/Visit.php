@@ -2,40 +2,60 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\VisitRepository;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
+#[ApiResource(
+    collectionOperations:
+    [
+            'get' =>
+            [
+                'normalization_context' => [
+                    'groups' => 'visit:list'
+                ]
+            ],
+            'post' =>
+            [
+                'denormalization_context' => [
+                    'groups' => 'visit:post'
+                ]
+            ]
+    ],
+    itemOperations:['get'],
+)]
 #[ORM\Entity(repositoryClass: VisitRepository::class)]
 class Visit
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['visit:list', 'visit:post', 'user:item'])]
     private ?int $id = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $dateVisit = null;
+    #[Groups(['visit:list', 'visit:post', 'user:item'])]
+    private ?\DateTimeInterface $visitDate = null;
 
     #[ORM\ManyToOne(inversedBy: 'visits')]
+    #[Groups(['visit:list', 'visit:post'])]
     private ?Nft $nft = null;
-
-    #[ORM\ManyToOne(inversedBy: 'visits')]
-    private ?User $user = null;
 
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    public function getDateVisit(): ?\DateTimeInterface
+    public function getVisitDate(): ?\DateTimeInterface
     {
-        return $this->dateVisit;
+        return $this->visitDate;
     }
 
-    public function setDateVisit(\DateTimeInterface $dateVisit): static
+    public function setVisitDate(\DateTimeInterface $visitDate): static
     {
-        $this->dateVisit = $dateVisit;
+        $this->visitDate = $visitDate;
 
         return $this;
     }
@@ -48,18 +68,6 @@ class Visit
     public function setNft(?Nft $nft): static
     {
         $this->nft = $nft;
-
-        return $this;
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): static
-    {
-        $this->user = $user;
 
         return $this;
     }

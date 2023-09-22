@@ -43,20 +43,20 @@ class UserUpdateType extends AbstractType
                 'widget' => 'single_text',
                 'attr' => ['class' => 'form-control'],
             ])
-            ->add('avatarPath', FileType::class, [
+            /*->add('avatarPath', FileType::class, [
                 'label' => 'Avatar ('.$filePath.')',
                 'mapped' => false,
                 'data' => new File($filePath),
                 'attr' => ['class' => 'form-control'],
-                ])
-            ->add('inscriptionDate', DateTimeType::class,[
+                ])*/
+            ->add('createdAt', DateTimeType::class,[
                 'widget' => 'single_text',
                 'attr' => ['class' => 'form-control']
             ])
             ->add('pseudo',TextType::class ,[
                 'attr' => ['class' => 'input-group form-control']
             ])
-            ->add('address', AddressType::class)
+            //->add('address', AddressType::class)
             ->add('update', SubmitType::class,[
                 'label' => 'Update',
                 'attr' => ['class' => 'input-group form-control btn btn-primary w-25 mt-3']

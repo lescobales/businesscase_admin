@@ -4,6 +4,9 @@
 
 {% block body %}
 <div class="container w-75">
+<div>
+        <a href="{{ path('app_nft_type_add')}}"><i class="bi bi-plus-circle fs-1 text-warning"></i></i></a>
+      </div>
     <table class="table">
         <thead>
           <tr>
@@ -18,7 +21,6 @@
             <th scope="row">{{ type.id }}</th>
             <td>{{ type.designation }}</td>
             <td>
-                <a href="{{ path('app_nft_type_remove', { 'id':type.id }) }}"><i class="bi bi-trash"></i></a>
                 <a href="{{ path('app_nft_type_update', { 'id':type.id }) }}"><i class="bi bi-pencil"></i></a>
             </td>
           </tr>

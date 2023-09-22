@@ -2,7 +2,11 @@ App\Entity\Nft:
     nft{0..1000}:
         token (unique): '<password()>'
         title: '<sentence(3)>'
-        representation: 'upload/tux.png'
+        representation: 'https://picsum.photos/id/<numberBetween(1,1000)>/200/200'
         initialPrice: '<numberBetween(1, 100)>'
-        quantity: '1'
-        typeNft: '@type*'
+        createdAt: '<dateTimeBetween()>'
+        nftType: '@type*'
+        category: '@category*'
+        owner: '@user*'
+        
+

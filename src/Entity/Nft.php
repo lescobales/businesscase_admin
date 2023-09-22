@@ -6,75 +6,108 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\NftRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Serializer\Annotation\Groups;
-
+use ApiPlatform\Core\Bridge\Doctrine\Orm\Filter\SearchFilter;
+use ApiPlatform\Core\Annotation\ApiFilter;
 #[ORM\Entity(repositoryClass: NftRepository::class)]
 #[ApiResource(
-    collectionOperations:[
-        'post' => [
-            'denormalization_context' => [
-                'groups' => 'nfts:post'
-            ]
-            ],
-        'get' => [
-            'normalization_context' => [
-                'groups' => 'ntfs:list'
-            ]
-        ]
-    ],
-    itemOperations:[
-        'get',
-        'put',
-        'delete'
-    ]
+        collectionOperations:
+        [
+            'get' => 
+            [
+                'normalization_context' => [
+                    'groups' => 'nft:list'
+                ],
 
+            ],
+            'post' => 
+            [
+                'denormalization_context' => [
+                    'groups' => 'nft:post'
+                ]
+            ],
+        ],
+        itemOperations:
+        [
+            'get' =>
+            [
+                'normalization_context' => [
+                    'groups' => 'nft:item'
+                ],
+            ],
+            'put',
+            'delete'
+        ],
+        paginationItemsPerPage: 10,
 )]
+
+#[ApiFilter(SearchFilter::class, properties:['owner.pseudo' => 'exact'])]
 class Nft
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['nft:item', 'nft:list'])]
     private ?int $id = null;
 
-    #[ORM\Column(length: 255)]
+    #[ORM\Column(length: 1000)]
+    #[Groups(['nft:item', 'nft:list'])] 
     private ?string $token = null;
 
     #[ORM\Column(length: 255)]
+    #[Groups(['nft:item', 'nft:list'])] 
     private ?string $title = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $representation = null;
-
     #[ORM\Column]
+    #[Groups(['nft:item', 'nft:list'])] 
     private ?float $initialPrice = null;
 
-    #[ORM\Column(nullable: true)]
-    private ?int $quantity = null;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups(['nft:item', 'nft:list'])] 
+    private ?\DateTimeInterface $createdAt = null;
 
-    #[ORM\OneToMany(mappedBy: 'nft', targetEntity: Item::class)]
-    private Collection $items;
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['nft:item', 'nft:list'])] 
+    private ?NftType $nftType = null;
 
-    #[ORM\ManyToOne(inversedBy: 'nfts')]
-    private ?TypeNft $typeNft = null;
+    #[ORM\OneToMany(mappedBy: 'nft', targetEntity: NftValue::class, orphanRemoval: true)]
+    #[Groups(['nft:item', 'nft:list'])] 
+    private Collection $nftValues;
 
-    #[ORM\OneToMany(mappedBy: 'nft', targetEntity: Value::class)]
-    private Collection $values;
-
-    #[ORM\ManyToOne(inversedBy: 'nfts')]
+    #[ORM\ManyToOne]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['nft:item', 'nft:list'])] 
     private ?Category $category = null;
 
-    #[ORM\OneToMany(mappedBy: 'nft', targetEntity: Visit::class)]
+    #[ORM\OneToMany(mappedBy: 'nft', targetEntity: Visit::class, orphanRemoval: true)]
+    #[Groups(['nft:item'])]
     private Collection $visits;
 
     #[ORM\ManyToOne(inversedBy: 'nfts')]
-    private ?User $user = null;
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['nft:item'])]
+    private ?User $owner = null;
+
+    #[ORM\ManyToMany(targetEntity: PreOrder::class, mappedBy: 'nfts')]
+    #[Groups('nft:item')]
+    private Collection $preOrders;
+
+    #[ORM\ManyToOne(inversedBy: 'nfts')]
+    #[Groups(['nft:item'])]
+    private ?NftCollection $nftCollection = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['nft:item', 'nft:list'])]
+    private ?string $representation = null;
 
     public function __construct()
     {
-        $this->items = new ArrayCollection();
-        $this->values = new ArrayCollection();
+        $this->nftValues = new ArrayCollection();
         $this->visits = new ArrayCollection();
+        $this->preOrders = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -106,18 +139,6 @@ class Nft
         return $this;
     }
 
-    public function getRepresentation(): ?string
-    {
-        return $this->representation;
-    }
-
-    public function setRepresentation(string $representation): static
-    {
-        $this->representation = $representation;
-
-        return $this;
-    }
-
     public function getInitialPrice(): ?float
     {
         return $this->initialPrice;
@@ -130,84 +151,54 @@ class Nft
         return $this;
     }
 
-    public function getQuantity(): ?int
+    public function getCreatedAt(): ?\DateTimeInterface
     {
-        return $this->quantity;
+        return $this->createdAt;
     }
 
-    public function setQuantity(?int $quantity): static
+    public function setCreatedAt(\DateTimeInterface $createdAt): static
     {
-        $this->quantity = $quantity;
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getNftType(): ?NftType
+    {
+        return $this->nftType;
+    }
+
+    public function setNftType(?NftType $nftType): static
+    {
+        $this->nftType = $nftType;
 
         return $this;
     }
 
     /**
-     * @return Collection<int, Item>
+     * @return Collection<int, NftValue>
      */
-    public function getItems(): Collection
+    public function getNftValues(): Collection
     {
-        return $this->items;
+        return $this->nftValues;
     }
 
-    public function addItem(Item $item): static
+    public function addNftValue(NftValue $nftValue): static
     {
-        if (!$this->items->contains($item)) {
-            $this->items->add($item);
-            $item->setNft($this);
+        if (!$this->nftValues->contains($nftValue)) {
+            $this->nftValues->add($nftValue);
+            $nftValue->setNft($this);
         }
 
         return $this;
     }
 
-    public function removeItem(Item $item): static
+    public function removeNftValue(NftValue $nftValue): static
     {
-        if ($this->items->removeElement($item)) {
+        if ($this->nftValues->removeElement($nftValue)) {
             // set the owning side to null (unless already changed)
-            if ($item->getNft() === $this) {
-                $item->setNft(null);
-            }
-        }
-
-        return $this;
-    }
-
-    public function getTypeNft(): ?TypeNft
-    {
-        return $this->typeNft;
-    }
-
-    public function setTypeNft(?TypeNft $typeNft): static
-    {
-        $this->typeNft = $typeNft;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Value>
-     */
-    public function getValue(): Collection
-    {
-        return $this->values;
-    }
-
-    public function addValue(Value $value): static
-    {
-        if (!$this->values->contains($value)) {
-            $this->values->add($value);
-            $value->setNft($this);
-        }
-
-        return $this;
-    }
-
-    public function removeValue(Value $value): static
-    {
-        if ($this->values->removeElement($value)) {
-            // set the owning side to null (unless already changed)
-            if ($value->getNft() === $this) {
-                $value->setNft(null);
+            if ($nftValue->getNft() === $this) {
+                $nftValue->setNft(null);
             }
         }
 
@@ -256,14 +247,65 @@ class Nft
         return $this;
     }
 
-    public function getUser(): ?User
+    public function getOwner(): ?User
     {
-        return $this->user;
+        return $this->owner;
     }
 
-    public function setUser(?User $user): static
+    public function setOwner(?User $owner): static
     {
-        $this->user = $user;
+        $this->owner = $owner;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, PreOrder>
+     */
+    public function getPreOrders(): Collection
+    {
+        return $this->preOrders;
+    }
+
+    public function addPreOrder(PreOrder $preOrder): static
+    {
+        if (!$this->preOrders->contains($preOrder)) {
+            $this->preOrders->add($preOrder);
+            $preOrder->addNft($this);
+        }
+
+        return $this;
+    }
+
+    public function removePreOrder(PreOrder $preOrder): static
+    {
+        if ($this->preOrders->removeElement($preOrder)) {
+            $preOrder->removeNft($this);
+        }
+
+        return $this;
+    }
+
+    public function getNftCollection(): ?NftCollection
+    {
+        return $this->nftCollection;
+    }
+
+    public function setNftCollection(?NftCollection $nftCollection): static
+    {
+        $this->nftCollection = $nftCollection;
+
+        return $this;
+    }
+
+    public function getRepresentation(): ?string
+    {
+        return $this->representation;
+    }
+
+    public function setRepresentation(?string $representation): static
+    {
+        $this->representation = $representation;
 
         return $this;
     }

@@ -1,0 +1,5 @@
+App\Entity\NftValue:
+  value{0..4000}:
+    weight: '<numberBetween(0, 100)>'
+    createdAt: '<dateTimeBetween()>'
+    nft: '@nft*'

@@ -1,5 +1,0 @@
-App\Entity\Value:
-  value{0..1000}:
-    amount: '<numberBetween(0, 100)>'
-    dateValue: '<dateTimeBetween()>'
-    nft: '@nft*'

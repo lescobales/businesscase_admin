@@ -1,14 +1,16 @@
+parameters:
+  hash: '$2y$13$Q8nL8tAuXweQQNCuBgqPr.m50T8WB.qZgfFdL2iCUjT3BZInrbCb' #12345
+
 App\Entity\User:
-  user{1..200}:
+  user{1..150}:
     email (unique): '<email()>'
     roles: '[]'
-    password: '<password()>'
+    password: <{hash}>
     isMale: '<numberBetween(0, 1)>'
     firstName: '<firstname()>'
     lastName: '<lastName()>'
     birthDate: '<dateTimeBetween()>'
-    avatar: 'upload/tux.svg'
-    inscriptionDate: '<dateTimeBetween()>'
-    pseudo: '<word()>'
-    nfts: '<numberBetween(1, 50)>x @nft*'
+    avatar: 'https://randomuser.me/api/portraits/med/men/<numberBetween(1,90)>.jpg'
+    createdAt: '<dateTimeBetween()>'
+    pseudo (unique): '<word()>'
     address: '@address*'

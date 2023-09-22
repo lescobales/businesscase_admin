@@ -2,46 +2,132 @@
 
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\PreOrderRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
+#[ApiResource(
+    collectionOperations:
+    [
+        'get' =>
+        [
+            'normalization_context' => [
+                'groups' => 'preOrder:list'
+            ]
+        ],
+        'post' =>
+        [
+            'denormalization_context' => [
+                'groups' => 'preOrder:post'
+            ]
+        ]
+    ],
+    itemOperations:
+    [
+        'get' =>
+        [
+            'normalization_context' =>
+            [
+                'groups' => 'preOrder:item'
+            ]
+        ]
+    ]
+)]
 #[ORM\Entity(repositoryClass: PreOrderRepository::class)]
 class PreOrder
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['preOrder:item', 'preOrder:list', 'user:item'])]
     private ?int $id = null;
 
+    #[ORM\ManyToOne(inversedBy: 'preOrders')]
+    #[ORM\JoinColumn(nullable: false)]
+    #[Groups(['preOrder:item'])]
+    private ?User $asker = null;
+
+    #[ORM\ManyToMany(targetEntity: Nft::class, inversedBy: 'preOrders')]
+    #[Groups(['preOrder:item'])]
+    private Collection $nfts;
+
     #[ORM\Column]
+    #[Groups(['preOrder:item', 'preOrder:list', 'user:item'])]
+    private ?int $amount = null;
+
+    #[ORM\Column]
+    #[Groups(['preOrder:item', 'user:item'])]
     private ?bool $isPurchase = null;
 
-    #[ORM\Column]
-    private ?float $amount = null;
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[Groups(['preOrder:item', 'preOrder:list', 'user:item'])]
+    private ?\DateTimeInterface $purchaseAt = null;
 
     #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $datePreOrder = null;
+    #[Groups(['preOrder:item', 'preOrder:list', 'user:item'])]
+    private ?\DateTimeInterface $createdAt = null;
 
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $datePurchase = null;
-
-    #[ORM\ManyToOne(inversedBy: 'preOrders')]
-    private ?User $user = null;
-
-    #[ORM\ManyToMany(targetEntity: Item::class, inversedBy: 'preOrders')]
-    private Collection $items;
 
     public function __construct()
     {
-        $this->items = new ArrayCollection();
+        $this->nfts = new ArrayCollection();
     }
 
     public function getId(): ?int
     {
         return $this->id;
+    }
+
+    public function getAsker(): ?User
+    {
+        return $this->asker;
+    }
+
+    public function setAsker(?User $asker): static
+    {
+        $this->asker = $asker;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection<int, Nft>
+     */
+    public function getNfts(): Collection
+    {
+        return $this->nfts;
+    }
+
+    public function addNft(Nft $nft): static
+    {
+        if (!$this->nfts->contains($nft)) {
+            $this->nfts->add($nft);
+        }
+
+        return $this;
+    }
+
+    public function removeNft(Nft $nft): static
+    {
+        $this->nfts->removeElement($nft);
+
+        return $this;
+    }
+
+    public function getAmount(): ?int
+    {
+        return $this->amount;
+    }
+
+    public function setAmount(int $amount): static
+    {
+        $this->amount = $amount;
+
+        return $this;
     }
 
     public function isIsPurchase(): ?bool
@@ -56,74 +142,26 @@ class PreOrder
         return $this;
     }
 
-    public function getAmount(): ?float
+    public function getPurchaseAt(): ?\DateTimeInterface
     {
-        return $this->amount;
+        return $this->purchaseAt;
     }
 
-    public function setAmount(float $amount): static
+    public function setPurchaseAt(?\DateTimeInterface $purchaseAt): static
     {
-        $this->amount = $amount;
+        $this->purchaseAt = $purchaseAt;
 
         return $this;
     }
 
-    public function getDatePreOrder(): ?\DateTimeInterface
+    public function getCreatedAt(): ?\DateTimeInterface
     {
-        return $this->datePreOrder;
+        return $this->createdAt;
     }
 
-    public function setDatePreOrder(\DateTimeInterface $datePreOrder): static
+    public function setCreatedAt(\DateTimeInterface $createdAt): static
     {
-        $this->datePreOrder = $datePreOrder;
-
-        return $this;
-    }
-
-    public function getDatePurchase(): ?\DateTimeInterface
-    {
-        return $this->datePurchase;
-    }
-
-    public function setDatePurchase(\DateTimeInterface $datePurchase): static
-    {
-        $this->datePurchase = $datePurchase;
-
-        return $this;
-    }
-
-    public function getUser(): ?User
-    {
-        return $this->user;
-    }
-
-    public function setUser(?User $user): static
-    {
-        $this->user = $user;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection<int, Item>
-     */
-    public function getItems(): Collection
-    {
-        return $this->items;
-    }
-
-    public function addItem(Item $item): static
-    {
-        if (!$this->items->contains($item)) {
-            $this->items->add($item);
-        }
-
-        return $this;
-    }
-
-    public function removeItem(Item $item): static
-    {
-        $this->items->removeElement($item);
+        $this->createdAt = $createdAt;
 
         return $this;
     }

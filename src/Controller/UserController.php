@@ -41,9 +41,9 @@ class UserController extends AbstractController
         $form = $this->createForm(UserUpdateType::class, $user);
         $form->handleRequest($request);
         if($form->isSubmitted() && $form->isValid()){
-            $file = $request->files->get('user_update')['avatarPath'];
-            $fileName = $file->getClientOriginalName();
-            $user->setAvatar('upload/'.$fileName);
+            //$file = $request->files->get('user_update')['avatarPath'];
+            //$fileName = $file->getClientOriginalName();
+            //$user->setAvatar('upload/'.$fileName);
             $this->userManager->persist($user);
             $this->userManager->flush();
             return $this->redirectToRoute('app_users_show');

@@ -19,7 +19,7 @@
     </head>
 
     <body class="bg-secondary">
-        {% if app.user %}
+        {% if app.user.roles is defined and app.user.roles|length > 1 %}
         {% set nbCol = 10 %}
         <div class="row">
             <aside class="col-md-2 bg-success-subtle p-0">

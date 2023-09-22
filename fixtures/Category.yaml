@@ -1,6 +1,5 @@
 App\Entity\Category:
   category{1..5}:
-    designation: '<sentence(3)>'
-    representation: 'upload/tux.svg'
-    nfts: '<numberBetween(0, 50)>x @nft*'
+    name: '<sentence(3)>'
+    representation: 'https://picsum.photos/200'
     categories: '<numberBetween(0, 50)>x @category*'

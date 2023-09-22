@@ -8,66 +8,102 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
-use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ApiResource()]
+#[ORM\Table(name: '`user`')]
+#[ApiResource(
+    collectionOperations: [
+	    'post' => [
+		    'denormalization_context' => [
+			    'groups' => 'user:post'
+	    ] 
+	    ], 
+        'get' => [
+            'normalization_context' => [
+                'groups' => 'user:list'
+            ]
+        ],
+    ],
+    itemOperations: [
+        'get' => [
+            'normalization_context' => [
+                'groups' => 'user:item'
+            ],
+        ],
+        'put',
+	'patch'
+    ],
+    paginationItemsPerPage: 10,
+)]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column]
+    #[Groups(['user:item', 'user:list'])]
     private ?int $id = null;
 
     #[ORM\Column(length: 180, unique: true)]
+    #[Groups(['user:item', 'user:post', 'user:list'])]
     private ?string $email = null;
 
     #[ORM\Column]
+    #[Groups('user:item')]
     private array $roles = [];
 
     /**
      * @var string The hashed password
      */
     #[ORM\Column]
+    #[Groups(['user:item', 'user:post'])]
     private ?string $password = null;
 
-    #[ORM\Column(length: 255)]
-    private ?string $firstName = null;
-
-    #[ORM\Column(length: 255)]
-    private ?string $lastName = null;
-
-    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
-    private ?\DateTimeInterface $birthDate = null;
-
-    #[ORM\Column(nullable: true)]
-    private ?bool $isMale = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $avatar = null;
-
-    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
-    private ?\DateTimeInterface $inscriptionDate = null;
-
-    #[ORM\Column(length: 255, nullable: true)]
-    private ?string $pseudo = null;
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Nft::class)]
+    #[ORM\OneToMany(mappedBy: 'owner', targetEntity: Nft::class, orphanRemoval: true)]
+    //#[Groups('user:item')]
     private Collection $nfts;
 
     #[ORM\ManyToOne(inversedBy: 'users')]
+    #[Groups('user:item')]
     private ?Address $address = null;
 
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: Visit::class)]
-    private Collection $visits;
-
-    #[ORM\OneToMany(mappedBy: 'user', targetEntity: PreOrder::class)]
+    #[ORM\OneToMany(mappedBy: 'asker', targetEntity: PreOrder::class)]
+    //#[Groups('user:item')]
     private Collection $preOrders;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['user:item'])]
+    private ?string $lastName = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['user:item'])]
+    private ?string $firstName = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE, nullable: true)]
+    #[Groups(['user:item'])]
+    private ?\DateTimeInterface $birthDate = null;
+
+    #[ORM\Column(length: 255, nullable: true)]
+    #[Groups(['user:item', 'user:list'])]
+    private ?string $avatar = null;
+
+    #[ORM\Column(type: Types::DATETIME_MUTABLE)]
+    #[Groups('user:item')]
+    private ?\DateTimeInterface $createdAt = null;
+
+    #[ORM\Column]
+    #[Groups('user:item')]
+    private ?bool $isMale = null;
+
+    #[ORM\Column(length: 255)]
+    #[Groups(['user:item', 'user:list'])]
+    private ?string $pseudo = null;
+
     public function __construct()
     {
         $this->nfts = new ArrayCollection();
-        $this->visits = new ArrayCollection();
         $this->preOrders = new ArrayCollection();
     }
 
@@ -160,90 +196,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         // $this->plainPassword = null;
     }
 
-    public function getFirstName(): ?string
-    {
-        return $this->firstName;
-    }
-
-    public function setFirstName(string $firstName): static
-    {
-        $this->firstName = $firstName;
-
-        return $this;
-    }
-
-    public function getLastName(): ?string
-    {
-        return $this->lastName;
-    }
-
-    public function setLastName(string $lastName): static
-    {
-        $this->lastName = $lastName;
-
-        return $this;
-    }
-
-    public function getBirthDate(): ?\DateTimeInterface
-    {
-        return $this->birthDate;
-    }
-
-    public function setBirthDate(?\DateTimeInterface $birthDate): static
-    {
-        $this->birthDate = $birthDate;
-
-        return $this;
-    }
-
-    public function isIsMale(): ?bool
-    {
-        return $this->isMale;
-    }
-
-    public function setIsMale(bool $isMale): static
-    {
-        $this->isMale = $isMale;
-
-        return $this;
-    }
-
-    public function getAvatar(): ?string
-    {
-        return $this->avatar;
-    }
-
-    public function setAvatar(?string $avatar): static
-    {
-        $this->avatar = $avatar;
-
-        return $this;
-    }
-
-    public function getInscriptionDate(): ?\DateTimeInterface
-    {
-        return $this->inscriptionDate;
-    }
-
-    public function setInscriptionDate(\DateTimeInterface $inscriptionDate): static
-    {
-        $this->inscriptionDate = $inscriptionDate;
-
-        return $this;
-    }
-
-    public function getPseudo(): ?string
-    {
-        return $this->pseudo;
-    }
-
-    public function setPseudo(string $pseudo): static
-    {
-        $this->pseudo = $pseudo;
-
-        return $this;
-    }
-
     /**
      * @return Collection<int, Nft>
      */
@@ -256,7 +208,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->nfts->contains($nft)) {
             $this->nfts->add($nft);
-            $nft->setUser($this);
+            $nft->setOwner($this);
         }
 
         return $this;
@@ -266,8 +218,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->nfts->removeElement($nft)) {
             // set the owning side to null (unless already changed)
-            if ($nft->getUser() === $this) {
-                $nft->setUser(null);
+            if ($nft->getOwner() === $this) {
+                $nft->setOwner(null);
             }
         }
 
@@ -287,36 +239,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     }
 
     /**
-     * @return Collection<int, Visit>
-     */
-    public function getVisits(): Collection
-    {
-        return $this->visits;
-    }
-
-    public function addVisit(Visit $visit): static
-    {
-        if (!$this->visits->contains($visit)) {
-            $this->visits->add($visit);
-            $visit->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeVisit(Visit $visit): static
-    {
-        if ($this->visits->removeElement($visit)) {
-            // set the owning side to null (unless already changed)
-            if ($visit->getUser() === $this) {
-                $visit->setUser(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection<int, PreOrder>
      */
     public function getPreOrders(): Collection
@@ -328,7 +250,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if (!$this->preOrders->contains($preOrder)) {
             $this->preOrders->add($preOrder);
-            $preOrder->setUser($this);
+            $preOrder->setAsker($this);
         }
 
         return $this;
@@ -338,10 +260,94 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     {
         if ($this->preOrders->removeElement($preOrder)) {
             // set the owning side to null (unless already changed)
-            if ($preOrder->getUser() === $this) {
-                $preOrder->setUser(null);
+            if ($preOrder->getAsker() === $this) {
+                $preOrder->setAsker(null);
             }
         }
+
+        return $this;
+    }
+
+    public function getLastName(): ?string
+    {
+        return $this->lastName;
+    }
+
+    public function setLastName(?string $lastName): static
+    {
+        $this->lastName = $lastName;
+
+        return $this;
+    }
+
+    public function getFirstName(): ?string
+    {
+        return $this->firstName;
+    }
+
+    public function setFirstName(?string $firstName): static
+    {
+        $this->firstName = $firstName;
+
+        return $this;
+    }
+
+    public function getBirthDate(): ?\DateTimeInterface
+    {
+        return $this->birthDate;
+    }
+
+    public function setBirthDate(?\DateTimeInterface $birthDate): static
+    {
+        $this->birthDate = $birthDate;
+
+        return $this;
+    }
+
+    public function getAvatar(): ?string
+    {
+        return $this->avatar;
+    }
+
+    public function setAvatar(?string $avatar): static
+    {
+        $this->avatar = $avatar;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeInterface
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeInterface $createdAt): static
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function isIsMale(): ?bool
+    {
+        return $this->isMale;
+    }
+
+    public function setIsMale(bool $isMale): static
+    {
+        $this->isMale = $isMale;
+
+        return $this;
+    }
+
+    public function getPseudo(): ?string
+    {
+        return $this->pseudo;
+    }
+
+    public function setPseudo(string $pseudo): static
+    {
+        $this->pseudo = $pseudo;
 
         return $this;
     }
